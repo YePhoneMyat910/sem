@@ -10,9 +10,8 @@ public class App
     public static void main(String[] args)
     {
         try {
-            // Connect to MongoDB running locally on port 27000
-            MongoClient mongoClient = new MongoClient("localhost", 27000);
-
+            // Connect to MongoDB
+            MongoClient mongoClient = new MongoClient("mongo-dbserver");
             // Get or create the database
             MongoDatabase database = mongoClient.getDatabase("mydb");
 
