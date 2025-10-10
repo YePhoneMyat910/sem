@@ -8,7 +8,6 @@
     <artifactId>seMethods</artifactId>
     <version>0.1.0.2</version>
 
-
     <!-- Java version and encoding -->
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
@@ -18,11 +17,11 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- MongoDB Java Driver -->
+        <!-- MySQL Java Driver -->
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver</artifactId>
-            <version>3.6.4</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.18</version>
         </dependency>
     </dependencies>
 
