@@ -20,7 +20,6 @@ jobs:
           docker network create --driver bridge se-methods || echo "Network already exists"
           docker pull mysql:8.0
           docker run -d --name db --network se-methods -e MYSQL_ROOT_PASSWORD=example -e MYSQL_DATABASE=employees mysql:8.0
-      
 
       - name: Build with Maven
         run: mvn package
