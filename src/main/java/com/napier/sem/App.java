@@ -2,68 +2,95 @@ package com.napier.sem;
 
 import java.sql.*;
 
-public class App
-{
-    public static void main(String[] args)
-    {
-        try
-        {
-            // Load Database driver
+public class App {
+    // Connection object for the whole class
+    private Connection con = null;
+
+    /**
+     * Connect to the MySQL database.
+     */
+    public void connect() {
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             System.out.println("Could not load SQL driver");
             System.exit(-1);
         }
 
-        // Connection to the database
-        Connection con = null;
-        int retries = 100;
-        for (int i = 0; i < retries; ++i)
-        {
-            System.out.println("Connecting to database...");
-            try
-            {
-                // Wait a bit for db to start
-                Thread.sleep(30000);
+        int retries = 10;
+        for (int i = 0; i < retries; i++) {
+            try {
+                System.out.println("Connecting to database...");
+                Thread.sleep(30000); // Wait for DB to start
 
-                // Connect to database
                 con = DriverManager.getConnection(
                         "jdbc:mysql://db:3306/employees?allowPublicKeyRetrieval=true&useSSL=false",
                         "root",
                         "example"
                 );
                 System.out.println("Successfully connected");
-
-                // Wait a bit
-                Thread.sleep(10000);
-
-                // Exit for loop
                 break;
-            }
-            catch (SQLException sqle)
-            {
-                System.out.println("Failed to connect to database attempt " + i);
-                System.out.println(sqle.getMessage());
-            }
-            catch (InterruptedException ie)
-            {
+            } catch (SQLException sqle) {
+                System.out.println("Failed attempt " + i + ": " + sqle.getMessage());
+            } catch (InterruptedException ie) {
                 System.out.println("Thread interrupted? Should not happen.");
             }
         }
+    }
 
-        if (con != null)
-        {
-            try
-            {
-                // Close connection
+    /**
+     * Disconnect from the MySQL database.
+     */
+    public void disconnect() {
+        if (con != null) {
+            try {
                 con.close();
-            }
-            catch (Exception e)
-            {
-                System.out.println("Error closing connection to database");
+                System.out.println("Disconnected from database");
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
             }
         }
+    }
+
+    /**
+     * Get employee info by ID
+     */
+    public void getEmployeeById(int empId) {
+        if (con == null) {
+            System.out.println("No database connection.");
+            return;
+        }
+
+        String query = "SELECT emp_no, first_name, last_name FROM employees WHERE emp_no = ?";
+        try (PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, empId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Employee ID: " + rs.getInt("emp_no"));
+                System.out.println("First Name: " + rs.getString("first_name"));
+                System.out.println("Last Name: " + rs.getString("last_name"));
+            } else {
+                System.out.println("Employee not found.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving employee: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Main method to run the application
+     */
+    public static void main(String[] args) {
+        App app = new App();
+
+        // Connect to DB
+        app.connect();
+
+        // Example: get employee with ID 10001
+        app.getEmployeeById(10001);
+
+        // Disconnect from DB
+        app.disconnect();
     }
 }
