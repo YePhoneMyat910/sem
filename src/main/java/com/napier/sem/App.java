@@ -162,7 +162,7 @@ public class App {
             // Print all salaries
             app.printSalaries(employees);
         } else {
-            System.out.println("No salary data found.");
+            System.out.println("No salary data founds.");
         }
 
         // Disconnect from DB
